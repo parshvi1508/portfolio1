@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parshvi Jain</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #ff69b4, #9370db, #4169e1);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: bold;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        nav {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            z-index: 100;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            position: relative;
+            padding: 5px 10px;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .section-hidden {
+            display: none !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        /* Enhanced Projects Section */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .project-card {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .project-image {
+            width: 100%;
+            height: 200px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .project-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .project-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: var(--primary-gradient);
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .project-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Enhanced Blog Section */
+        .blog-section {
+            padding: 40px 0;
+        }
+
+        .blog-controls {
+            margin-bottom: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .blog-editor {
+            width: 100%;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .blog-editor.active {
+            display: block;
+        }
+
+        .blog-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 5px;
+        }
+
+        .blog-content-editor {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            resize: vertical;
+        }
+
+        .blog-post {
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+
+        .blog-post-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .blog-post-date {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        .blog-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .blog-post.active .blog-content {
+            max-height: 2000px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            background: var(--primary-gradient);
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+        #social-links {
+            display: flex;
+            gap: 20px; 
+          }
+          
+          #social-links a {
+            font-size: 24px; 
+            color: var(--primary-gradient);
+            transition: transform 0.3s, color 0.3s; 
+          }
+          
+          #social-links a:hover {
+            color: #0077b5; 
+            transform: scale(1.1); 
+          }
+          .certificates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .certificate-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .certificate-card:hover {
+            transform: scale(1.05);
+        }
+
+        .certificate-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .certificate-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .certificate-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .certificate-issuer {
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        /* Blog Editor Enhancements */
+        .blog-editor-container {
+            position: relative;
+        }
+
+        #quill-editor {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: white;
+            min-height: 200px;
+        }
+
+        .ql-toolbar {
+            background: rgba(255,255,255,0.1);
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload-wrapper input[type=file] {
+            font-size: 100px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        .file-upload-btn {
+            border: 1px solid var(--glass-border);
+            color: white;
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .card-content i {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #ff69b4, #9370db);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+          }
+          
+          .card-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: white;
+            font-size: 1.2rem;
+          }
+        .file-upload-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .selected-file {
+            margin-left: 10px;
+            color: #aaa;
+        }
+          
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+    
+    <nav>
+        <a href="#home" class="nav-link active" data-section="home">Home</a>
+        <a href="#about" class="nav-link" data-section="about">About</a>
+        <a href="#projects" class="nav-link" data-section="projects">Projects</a>
+        <a href="#blog" class="nav-link" data-section="blog">Certificates</a>
+    </nav>
+
+    <div class="container">
+        <section style="display: flex; flex-direction: column; align-items: center;" id="home" class="hero">
+            <div>
+                <h1 class="gradient-text">Hi! I am Parshvi Jain</h1>
+                
+            </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <img src="Parshvi Jain .jpg" alt="Parshvi Jain" 
+                         style="width: 300px; height: 300px; border-radius: 50%; border: 3px solid white; margin-bottom: 10px;">
+                    <p class="gradient-text" style="margin-bottom: 20px;">Ad Astra per Aspera!</p>
+                    <h3 class="gradient-text">An ambitious & passionate CS Student.</h3>
+                </div>
+        </section>
+
+        <section style="margin-top:10%;" id="about" class="glass-card section-hidden">
+            <h2 class="gradient-text">About Me</h2>
+            <section style="margin-top:1%;" id="about" class="glass-card section-hidden">
+            <p>Hello! I’m Parshvi Jain, a passionate and driven tech enthusiast with a deep interest in creating solutions that make a real difference. With expertise in Python, C, SQL, and web development (including HTML, CSS, and JavaScript), I’m always exploring new technologies and seeking opportunities to expand my skill set, particularly in AI and data science.
+
+                I believe in the power of innovation and clear communication, striving to simplify complex ideas and present them in ways that resonate with diverse audiences. Collaboration is at the heart of my approach, and I thrive in environments where creative problem-solving and teamwork lead to impactful outcomes.
+                
+                Currently, I’m focused on developing innovative solutions through my work, and I’m always eager to take on new challenges that push my technical abilities further, working toward becoming the shining star I aspire to be.</p>
+
+            </section>
+        </section>
+        <section style="margin-top:10%;" id="about" class="glass-card section-hidden">
+            <h2 class="gradient-text">Connect with Me</h2>
+            <section style="margin-top:1%;" id="about" class="glass-card section-hidden">
+                <a href="https://github.com/parshvi1508" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fab fa-github"></i>
+                      <span>GitHub</span>
+                    </div>
+                  </a>
+                  <a href="https://www.linkedin.com/in/parshvi-jain-0a51a7299/" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fab fa-linkedin"></i>
+                      <span>LinkedIn</span>
+                    </div>
+                  </a>
+                  <a href="https://www.kaggle.com/jainp1508" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fab fa-kaggle"></i>
+                      <span>Kaggle</span>
+                    </div>
+                  </a>
+                  <a href="https://www.codechef.com/users/parshvi1508" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fas fa-code"></i>
+                      <span>CodeChef</span>
+                    </div>
+                  </a>
+
+                  <a href="https://codeforces.com/profile/pjain_1508" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fas fa-code"></i>
+                      <span>Codeforces</span>
+                    </div>
+                  </a>
+                  <a href="https://leetcode.com/parshvijain1508/" target="_blank" class="social-card">
+                    <div class="card-content">
+                      <i class="fas fa-code"></i>
+                      <span>LeetCode</span>
+                    </div>
+                  </a>
+                </div>
+            </section>
+        </section>
+        
+        
+
+        <section id="projects" class="section-hidden">
+            <h2 class="gradient-text">Projects</h2>
+            <div class="projects-grid">
+                <div class="glass-card project-card">
+                    
+                    <img class="project-image" src="todolist.png">
+                    <h3>Taskify 2.0</h3>
+                    <p>A responsive to-do list made in streamlit</p>
+                    <div class="project-buttons">
+                        <a href="https://taskify2.streamlit.app/" class="project-btn">Live Demo</a>
+                        <a href="https://github.com/parshvi1508/Taskify2.0" class="project-btn">GitHub</a>
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="Screenshot 2024-11-20 165831.png">
+                    <h3>Internet Speed Test</h3>
+                    <p>Responsive webapp to check download, upload and ping speed.</p>
+                    <div class="project-buttons">
+                        <a href="https://ispeedtest.streamlit.app/" class="project-btn">Live Demo</a>
+                        <a href="https://github.com/parshvi1508/speed_test" class="project-btn">GitHub</a>
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="Screenshot 2024-11-20 170218.png">
+                   
+                    <h3>Alarm</h3>
+                    <p>Digital art platform built with modern frameworks and tools.</p>
+                    <div class="project-buttons">
+                        <a href="https://alarmpy.streamlit.app/" class="project-btn">Live Demo</a>
+                        <a href="https://github.com/parshvi1508/alarm" class="project-btn">GitHub</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+
+
+        <section id="projects" class="section-hidden">
+            <h2 class="gradient-text">Skills</h2>
+            <div class="projects-grid">
+                <div class="glass-card project-card">
+                    <div class="project-buttons">
+                        <a  class="project-btn">Streamlit</a>
+                        <a  class="project-btn">Python</a>
+                        <a  class="project-btn">HTML</a>
+                        <a  class="project-btn">CSS</a>
+                        <a  class="project-btn">Flask</a>
+                        <a  class="project-btn">C</a>
+                        <a  class="project-btn">Problem Solving</a>
+                        <a  class="project-btn">Communication</a>
+                        <a  class="project-btn">Critical Thinking</a>
+                        <a  class="project-btn">Time Management</a>
+                        <a  class="project-btn">Open Source Contributions</a>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+
+        <section id="blog" class="section-hidden">
+            <h2 class="gradient-text">Certificates</h2>
+            <div class="projects-grid">
+                <div class="glass-card project-card">
+                    
+                    <img class="project-image" src="AIBuildersLab.png">
+                    <h3>Google AI Builders Lab bootcamp </h3>
+                    <p>Issued by: Google for Developers</p>
+                    <div class="project-buttons">
+                        <a href="https://drive.google.com/file/d/1sFAA-KAh8zKyPQ7yLC3-2TNk3g8ryjZ2/view" class="project-btn">View Certificate</a>
+                        
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="Parshvi Jain_page-0001.jpg">
+                    <h3>Switch Case Competition</h3>
+                    <p>Issued By: Switch Energy Alliance, University of Texas at Austin</p>
+                    <div class="project-buttons">
+                        <a href="https://drive.google.com/file/d/1CVcH9Dtqx6Evx0YMWIRPR2EtIGUMfCGw/view" class="project-btn">View Certificate</a>
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="image.png">
+                   
+                    <h3>AI Text Summarization App</h3>
+                    <p>Issued by: Postman</p>
+                    <div class="project-buttons">
+                        
+                        <a href="https://drive.google.com/file/d/10EYM4dgwz9VzPc6Jt8aywSoncIXFAio0/view" class="project-btn">View Certificate</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="blog" class="section-hidden">
+            
+            <div class="projects-grid">
+                <div class="glass-card project-card">
+                    
+                    <img class="project-image" src="hackiitkctf.png">
+                    <h3>Hack_IITK_CTF </h3>
+                    <p>Issued by: C3i Hub</p>
+                    <div class="project-buttons">
+                        <a href="https://drive.google.com/file/d/1ufO1-xDY1BaNXly9Npl1qtJTyVRKS-Sg/view" class="project-btn">View Certificate</a>
+                        
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="Opportunities in the LLM World.png">
+                    <h3>Opportunities in the LLM World</h3>
+                    <p>Issued By: AI4Bharat</p>
+                    <div class="project-buttons">
+                        <a href="https://drive.google.com/file/d/18z7x1R2NG1wIrTz6onU95zBj2l13Oko6/view" class="project-btn">View Certificate</a>
+                    </div>
+                </div>
+                <div class="glass-card project-card">
+                    <img class="project-image" src="nptel 1.png">
+                   
+                    <h3>The Joy of Computing Using Python (IIT Ropar)</h3>
+                    <p>Issued by: NPTEL</p>
+                    <div class="project-buttons">
+                        
+                        <a href="https://drive.google.com/file/d/1QfyjRJXrABmj5_OHJSTI84vWblhqbdgb/view" class="project-btn">View Certificate</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+
+
+       
+        
+  
+        <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Particles.js initialization
+                if (window.particlesJS) {
+                    particlesJS('particles-js', {
+                        particles: {
+                            number: { value: 80 },
+                            color: { value: '#ffffff' },
+                            shape: { type: 'circle' },
+                            opacity: { value: 0.5 },
+                            size: { value: 3 },
+                            move: {
+                                enable: true,
+                                speed: 2,
+                                direction: 'none',
+                                random: false,
+                                straight: false,
+                                out_mode: 'out',
+                                bounce: false
+                            }
+                        },
+                        interactivity: {
+                            detect_on: 'canvas',
+                            events: {
+                                onhover: { enable: true, mode: 'repulse' },
+                                onclick: { enable: true, mode: 'push' },
+                                resize: true
+                            }
+                        }
+                    });
+                }
+            
+                // Navigation handling
+                const navLinks = document.querySelectorAll('.nav-link');
+                const sections = document.querySelectorAll('section');
+            
+                function showSection(sectionId) {
+                    sections.forEach(section => {
+                        if (section.id === sectionId) {
+                            section.classList.remove('section-hidden');
+                        } else {
+                            section.classList.add('section-hidden');
+                        }
+                    });
+                }
+            
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        this.classList.add('active');
+                        const sectionId = this.getAttribute('data-section');
+                        showSection(sectionId);
+                    });
+                });
+            
+                
+                 // Show home section by default
+                showSection('home');
+            });
+    </script>
+</body>
+</html>
